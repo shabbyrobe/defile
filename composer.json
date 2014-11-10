@@ -1,0 +1,19 @@
+{
+    "name": "shabbyrobe/defile",
+    "description": "Stream wrapper for testing code dependent on PHP's filesystem functions",
+    "version": "0.0.1",
+    "license": "MIT",
+    "keywords": ["filesystem", "testing"],
+    "authors": [
+        {
+            "name": "Blake Williams", 
+            "email": "code@shabbyrobe.org"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    },
+    "autoload": {
+        "psr-4": {"Defile\\": "src/"}
+    }
+}

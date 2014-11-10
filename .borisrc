@@ -1,0 +1,17 @@
+<?php
+require __DIR__."/vendor/autoload.php";
+require __DIR__.'/test/config.php';
+autoload_namespace("Defile", realpath(__DIR__."/../src"));
+
+$registry = \Defile\StreamRegistry::instance();
+
+$memFs = new \Defile\FileSystem\Memory;
+$registry->add('dfl', 'mem', $memFs);
+
+$boris->setLocal(['memFs'=>$memFs]);
+
+echo "Defile Boris\n\n";
+echo "Registered filesystems:\n";
+echo "  Defile\FileSystem\Memory - dfl://mem\n";
+echo "\n";
+
