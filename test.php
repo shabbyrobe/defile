@@ -14,8 +14,8 @@ pass --throw-on-error.
 $basePath = __DIR__;
 $testPath = __DIR__."/test";
 
-require "$basePath/vendor/autoload.php";
-require "$testPath/config.php";
+require_once "$basePath/vendor/autoload.php";
+require_once "$testPath/config.php";
 error_reporting(E_ALL);
 
 autoload_namespace('Defile\Test', $testPath.'/lib', ['prepend'=>true]);
@@ -30,7 +30,7 @@ $options = array(
 );
 $options = array_merge(
     $options,
-    getopt('q:', array('help', 'filter:', 'coverage-html:', 'exclude-group:', 'group:', 'throw-on-error'))
+    getopt('q:', array('help', 'filter:', 'coverage-html:', 'exclude-group:', 'group:', 'throw-on-error')) ?: []
 );
 $help = array_key_exists('help', $options);
 if ($help) {

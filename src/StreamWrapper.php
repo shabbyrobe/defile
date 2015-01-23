@@ -381,10 +381,11 @@ class StreamWrapper extends Util\Object
      */
     public function stream_stat()
     {
-        if ($this->stream) 
+        if ($this->stream)  {
             return $this->stream->getNode()->stat();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -484,16 +485,27 @@ class StreamWrapper extends Util\Object
     public function url_stat($path, $flags)
     {
         list ($url, $fs) = $this->parsePath($path);
+
+        // if the url is '.' or '..', we need to return a dummy node
+        // so that DirectoryIterator doesn't get confused. our file system
+        // class has no notion of a '.' or a '..', we leave those hacks up
+        // to this compatibility layer
+        $base = basename($url['path']);
+        if ($base == '.' || $base == '..') {
+            return (new Node($url['path'], Node::DIR))->stat();
+        }
+
         try {
             $node = $fs->getNode($url['path']);
         }
         catch (FileException $fex) {
             return false;
         }
-        if ($node)
+        if ($node) {
             return $node->stat();
-        else
+        } else {
             return false;
+        }
     }
 }
 

@@ -25,25 +25,26 @@ class Node extends Util\Object
         $this->inode = $inode;
         $this->group = $group;
 
-        if ($perms)
+        if ($perms) {
             $this->perms = $perms;
-        elseif ($type == self::DIR)
+        } elseif ($type == self::DIR) {
             $this->perms = 0777;
-        else
+        } else {
             $this->perms = 0666;
+        }
     }
 
     public static function createFromStat($path, $stat)
     {
         $type = null;
         $mode = $stat['mode'];
-        if ($mode & 040000)
+        if ($mode & 040000) {
             $type = Node::DIR;
-        elseif ($mode & 0100000)
+        } elseif ($mode & 0100000) {
             $type = Node::FILE;
-        else
+        } else {
             throw new \UnexpectedValueException("Unexpected mode: ".decoct($mode));
-
+        }
         $node = new static($path, $type);
         $node->inode = $stat['ino'];
         $node->owner = $stat['uid'];
@@ -59,10 +60,11 @@ class Node extends Util\Object
     public function getFullMode()
     {
         $mode = $this->perms;
-        if ($this->type == Node::DIR) 
+        if ($this->type == Node::DIR) {
             $mode |= 040000;
-        else
+        } else {
             $mode |= 0100000;
+        }
         return $mode;
     }
 

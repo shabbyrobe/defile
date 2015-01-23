@@ -27,12 +27,12 @@ class Memory extends Base
 
         yield $cur;
         foreach ($parts as $part) {
-            if ($cur->node->type != Node::DIR)
+            if ($cur->node->type != Node::DIR) {
                 throw FileException::ENOTDIR();
-
-            if (!isset($cur->data[$part]))
+            }
+            if (!isset($cur->data[$part])) {
                 throw FileException::ENOENT();
-
+            }
             $cur = $cur->data[$part]; 
             yield $cur;
         }
@@ -49,10 +49,12 @@ class Memory extends Base
     {
         $path = Util\Path::normalise("/$path");
         $dir = $this->getInternalNode($path);
-        if (!$dir)
+        if (!$dir) {
             throw FileException::ENOENT();
-        if ($dir->node->type != Node::DIR)
+        }
+        if ($dir->node->type != Node::DIR) {
             throw FileException::ENOTDIR();
+        }
 
         // if this class function simply yields by itself, the guard
         // clauses are never executed until the generator starts its
@@ -68,30 +70,29 @@ class Memory extends Base
     public function setMeta($path, $meta, $value=null)
     {
         $path = Util\Path::normalise("/$path");
-        if ($value)
+        if ($value) {
             $meta = [$meta=>$value];
- 
-        if (array_diff(array_keys($meta), static::$meta))
+        }
+        if (array_diff(array_keys($meta), static::$meta)) {
             throw new \InvalidArgumentException();
-
+        }
         $node = $this->getNode($path);
-        if (!$node)
+        if (!$node) {
             throw FileException::ENOENT();
-
-        if (isset($meta[static::M_PERMS]))
+        }
+        if (isset($meta[static::M_PERMS])) {
             $node->perms = $meta[static::M_PERMS] & 07777;
-
-        if (isset($meta[static::M_GROUP]))
+        }
+        if (isset($meta[static::M_GROUP])) {
             $node->group = $meta[static::M_GROUP];
-
-        if (isset($meta[static::M_OWNER]))
+        }
+        if (isset($meta[static::M_OWNER])) {
             $node->owner = $meta[static::M_OWNER];
-
+        }
         if (isset($meta[static::M_ATIME])) {
             $atime = $meta[static::M_ATIME];
             $node->atime = $atime === true ? time() : $atime;
         }
-
         if (isset($meta[static::M_MTIME])) {
             $mtime = $meta[static::M_MTIME];
             $node->mtime = $mtime === true ? time() : $mtime;
@@ -109,13 +110,13 @@ class Memory extends Base
         $base = basename($path);
         $dirMemNode = $this->getInternalNode($dir);
 
-        if (!$dirMemNode || !isset($dirMemNode->data[$base]))
+        if (!$dirMemNode || !isset($dirMemNode->data[$base])) {
             throw FileException::ENOENT();
-
+        }
         $memNode = $dirMemNode->data[$base];
-        if ($memNode->node->type == Node::DIR)
+        if ($memNode->node->type == Node::DIR) {
             throw FileException::EISDIR();
-
+        }
         unset($dirMemNode->data[$base]);
     }
 
@@ -126,16 +127,16 @@ class Memory extends Base
         $base = basename($path);
         $parentMemNode = $this->getInternalNode($parentPath);
 
-        if (!$parentMemNode || !isset($parentMemNode->data[$base]))
+        if (!$parentMemNode || !isset($parentMemNode->data[$base])) {
             throw FileException::ENOENT();
-
+        }
         $memNode = $parentMemNode->data[$base];
-        if ($memNode->node->type != Node::DIR)
+        if ($memNode->node->type != Node::DIR) {
             throw FileException::ENOTDIR();
-
-        if ($memNode->len > 0)
+        }
+        if ($memNode->len > 0) {
             throw FileException::ENOTEMPTY();
-
+        }
         unset($parentMemNode->data[$base]);
 
         return true;
@@ -145,9 +146,9 @@ class Memory extends Base
     {
         $path = Util\Path::normalise("/$path");
         $target = $this->getInternalNode($path);
-        if ($target)
+        if ($target) {
             throw FileException::EEXIST();
-
+        }
         if ($options & STREAM_MKDIR_RECURSIVE) {
             $bits = "";
             $make = false;
@@ -155,22 +156,25 @@ class Memory extends Base
                 $bits .= "/$part";
                 if (!$make) {
                     $node = $this->getInternalNode($bits);
-                    if (!$node)
+                    if (!$node) {
                         $make = true;
+                    }
                 }
                 if ($make) {
-                    if (!$this->mkdir($bits, $mode, $options & ~STREAM_MKDIR_RECURSIVE))
+                    if (!$this->mkdir($bits, $mode, $options & ~STREAM_MKDIR_RECURSIVE)) {
                         throw new \Exception();
+                    }
                 }
             }
             return true;
         }
         else {
             $dir = $this->getInternalNode(dirname($path));
-            if (!$dir)
+            if (!$dir) {
                 throw FileException::ENOENT();
-            elseif ($dir->node->type != Node::DIR)
+            } elseif ($dir->node->type != Node::DIR) {
                 throw FileException::ENOTDIR();
+            }
 
             $node = $this->createNode($path, Node::DIR, ['perms'=>$mode]);
             $dir->data[basename($path)] = (object)['node'=>$node, 'data'=>[], 'len'=>0];
@@ -193,14 +197,14 @@ class Memory extends Base
         $fromParent = $this->getInternalNode($fromInfo['dirname']);
 
         $toNode = $this->getInternalNode($to);
-        if ($toNode && $toNode->type == Node::DIR)
+        if ($toNode && $toNode->type == Node::DIR) {
             $toParent = $toNode; 
-        else
+        } else {
             $toParent = $this->getInternalNode($toInfo['dirname']);
-
-        if (!$toParent)
+        }
+        if (!$toParent) {
             throw FileException::ENOENT();
-
+        }
         $fromNode->node->path = $to;
         $toParent->data[$toInfo['basename']] = $fromNode;
         unset($fromParent->data[$fromInfo['basename']]);
@@ -224,10 +228,11 @@ class Memory extends Base
             foreach ($this->descendInternal($path) as $cur);
         }
         catch (FileException $ex) {
-            if ($ex->getCode() == FileException::ENOENT)
+            if ($ex->getCode() == FileException::ENOENT) {
                 return null;
-            else
+            } else {
                 throw $ex;
+            }
         }
         return $cur;
     }
@@ -235,25 +240,26 @@ class Memory extends Base
     public function getNode($path)
     {
         $node = $this->getInternalNode($path);
-        if ($node)
+        if ($node) {
             return $node->node;
+        }
     }
 
     protected function addNode(Node $node)
     {
         $info = pathinfo($node->path);
-        if ($info['dirname'] == '.')
+        if ($info['dirname'] == '.') {
             throw new \InvalidArgumentException("Absolute paths only - '{$node->path}' was relative");
-
+        }
         $parentNode = $this->getInternalNode($info['dirname']);
-        if (!$parentNode)
+        if (!$parentNode) {
             throw FileException::ENOENT("Parent {$info['dirname']} not found");
-
-        if ($node->type == Node::DIR)
+        }
+        if ($node->type == Node::DIR) {
             $node = (object)['node'=>$node, 'data'=>[], 'len'=>0];
-        else
+        } else {
             $node = (object)['node'=>$node, 'data'=>(object)['data'=>''], 'len'=>0];
-
+        }
         $parentNode->len++;
         $parentNode->data[$info['basename']] = $node;
     }
@@ -270,11 +276,12 @@ class Memory extends Base
             $this->addNode($node);
             $memNode = $this->getInternalNode($node->path);
         }
-        if (!$memNode)
+        if (!$memNode) {
             return false;
-        if ($memNode->node->type == Node::DIR)
+        }
+        if ($memNode->node->type == Node::DIR) {
             throw FileException::EISDIR();
-
+        }
         return new Stream\Memory($this, $node, $streamMode, $memNode->data);
     }
 }

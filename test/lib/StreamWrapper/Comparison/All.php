@@ -68,7 +68,7 @@ trait All
     //use Finfo;
  
     // FILESYSTEM CLASSES
-    //use DirectoryIterator;
+    use DirectoryIterator;
     //use GlobIterator;
     //use RecursiveDirectoryIterator;
     //use SplFileInfo;
