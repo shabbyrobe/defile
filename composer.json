@@ -1,7 +1,7 @@
 {
     "name": "shabbyrobe/defile",
     "description": "Stream wrapper for testing code dependent on PHP's filesystem functions",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
     "keywords": ["filesystem", "testing"],
     "authors": [
