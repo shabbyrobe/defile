@@ -171,3 +171,4 @@ class TestStream
     public function url_stat($path, $flags)
     {}
 }
+
