@@ -101,11 +101,12 @@ class StreamWrapper extends Util\Object
         $iterator = $fs->iterate($url['path']);
         $gen = function() use ($url, $iterator) {
             yield '.';
-            if ($url['path'] != '/' && $url['path'] != '')
+            if ($url['path'] != '/' && $url['path'] != '') {
                 yield '..';
-
-            foreach ($iterator as $item)
+            }
+            foreach ($iterator as $item) {
                 yield $item;
+            }
         };
         $this->dirHandle = $gen();
         return true;
@@ -183,10 +184,11 @@ class StreamWrapper extends Util\Object
      */
     public function stream_cast($castAs)
     {
-        if ($this->stream)
+        if ($this->stream) {
             return $this->stream->cast($castAs);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -205,10 +207,11 @@ class StreamWrapper extends Util\Object
      */
     public function stream_eof()
     {
-        if ($this->stream)
+        if ($this->stream) {
             return $this->stream->eof();
-        else
+        } else {
             return true;
+        }
     }
 
     /**
@@ -216,11 +219,11 @@ class StreamWrapper extends Util\Object
      */
     public function stream_flush()
     {
-
-        if ($this->stream)
+        if ($this->stream) {
             return $this->stream->flush();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -373,7 +376,17 @@ class StreamWrapper extends Util\Object
      */
     public function stream_set_option($option, $arg1, $arg2)
     {
-        throw new \BadMethodCallException("Not yet supported");
+        switch ($option) {
+            case STREAM_OPTION_BLOCKING:
+            case STREAM_OPTION_READ_TIMEOUT:
+                throw new \BadMethodCallException("Not yet supported: STREAM_OPTION_BLOCKING");
+            break;
+            case STREAM_OPTION_WRITE_BUFFER:
+                ;
+            break;
+            default:
+                throw new \BadMethodCallException("Unknown stream option $option");
+        }
     }
 
     /**
@@ -381,7 +394,7 @@ class StreamWrapper extends Util\Object
      */
     public function stream_stat()
     {
-        if ($this->stream)  {
+        if ($this->stream) {
             return $this->stream->getNode()->stat();
         } else {
             return false;
@@ -393,10 +406,11 @@ class StreamWrapper extends Util\Object
      */
     public function stream_tell()
     {
-        if ($this->stream)
+        if ($this->stream) {
             return $this->stream->tell();
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -449,8 +463,7 @@ class StreamWrapper extends Util\Object
             catch (FileException $fex) {
                 if ($fex->getCode() == FileException::ENOTWRITABLE) {
                     $ret = false;
-                }
-                else {
+                } else {
                     throw $fex;
                 }
             }

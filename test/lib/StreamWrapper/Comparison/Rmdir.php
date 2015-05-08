@@ -46,5 +46,21 @@ trait Rmdir
         rmdir("{$this->basePath}/foo");
         $this->assertWarning("rmdir({$this->basePath}/foo): No such file or directory");
     }
-}
 
+    /**
+     * This bug occurred because the directory's length was not being decremented
+     * after removing a file
+     * @group rmdir
+     * @group filesystemfunc
+     */
+    function testRmdirThatPreviouslyContainedAFileWorks()
+    {
+        $dir = "/dir";
+        $this->fileSystem->mkdir($dir);
+        $this->fileSystem->touch("$dir/test");
+
+        unlink("{$this->basePath}$dir/test");
+        rmdir("{$this->basePath}$dir");
+        $this->assertNotExists($dir);
+    }
+}

@@ -118,6 +118,7 @@ class Memory extends Base
             throw FileException::EISDIR();
         }
         unset($dirMemNode->data[$base]);
+        --$dirMemNode->len;
     }
 
     public function rmdir($path)
