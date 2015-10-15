@@ -70,7 +70,7 @@ trait All
     // FILESYSTEM CLASSES
     use DirectoryIterator;
     //use GlobIterator;
-    //use RecursiveDirectoryIterator;
+    use RecursiveDirectoryIterator;
     //use SplFileInfo;
     //use SplFileObject;
 

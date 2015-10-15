@@ -20,6 +20,9 @@ error_reporting(E_ALL);
 
 autoload_namespace('Defile\Test', $testPath.'/lib', ['prepend'=>true]);
 
+// if it gets too tricky to find your bug, enable this:
+// \Defile\StreamWrapper::$logHandle = fopen("php://stdout", "w");
+
 stream_chunk_ensure_quirk();
 
 $options = array(

@@ -9,7 +9,9 @@ abstract class TestCase extends \Defile\Test\PhpErrorHandlingTestCase
     public $fileSystem;
     public $basePath;
 
-    protected $templates = [];
+    protected $templates = [
+        'path'=>'{basePath}{file}',
+    ];
 
     protected abstract function createFileSystem();
 
@@ -51,8 +53,9 @@ abstract class TestCase extends \Defile\Test\PhpErrorHandlingTestCase
 
     public function tpl($name, $vars)
     {
-        if (!isset($this->templates[$name]))
+        if (!isset($this->templates[$name])) {
             throw new \InvalidArgumentException();
+        }
 
         $tpl = $this->templates[$name];
         $tok = [];

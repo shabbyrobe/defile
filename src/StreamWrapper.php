@@ -21,11 +21,15 @@ class StreamWrapper extends Util\Object
     private $dir;
     private $dirHandle;
 
+    public static $logHandle = null;
+
     /**
      * @return bool
      */
     public function dir_closedir()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         $this->dir = null;
         $this->dirHandle = null;
         return true;
@@ -38,8 +42,11 @@ class StreamWrapper extends Util\Object
      */
     public function dir_opendir($path, $options)
     {
-        if ($options !== 0)
+        if ($options !== 0) {
             throw new \UnexpectedValueException();
+        }
+
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
 
         list ($url, $fs) = $this->parsePath($path);
 
@@ -66,6 +73,8 @@ class StreamWrapper extends Util\Object
      */
     public function dir_readdir()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if (!$this->dirHandle) {
             return false;
         }
@@ -84,6 +93,8 @@ class StreamWrapper extends Util\Object
      */
     public function dir_rewinddir()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         try {
             return $this->dirRewind();
         }
@@ -120,6 +131,8 @@ class StreamWrapper extends Util\Object
      */
     public function mkdir($path, $mode, $options)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($url, $fs) = $this->parsePath($path);
         try {
             return $fs->mkdir($url['path'], $mode, $options);
@@ -137,11 +150,14 @@ class StreamWrapper extends Util\Object
      */
     public function rename($pathFrom, $pathTo)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($fromUrl, $fromFs) = $this->parsePath($pathFrom);
         list ($toUrl, $toFs) = $this->parsePath($pathTo);
 
-        if ($fromFs != $toFs)
+        if ($fromFs != $toFs) {
             throw new \LogicException("Cross fs rename not supported yet");
+        }
 
         $toNode = $toFs->getNode($toUrl['path']);
         if ($toNode && $toNode->type == Node::DIR) {
@@ -166,6 +182,8 @@ class StreamWrapper extends Util\Object
      */
     public function rmdir($path, $options)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($url, $fs) = $this->parsePath($path);
 
         try {
@@ -184,6 +202,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_cast($castAs)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             return $this->stream->cast($castAs);
         } else {
@@ -196,6 +216,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_close()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             $this->stream->close();
             $this->stream = null;
@@ -207,6 +229,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_eof()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             return $this->stream->eof();
         } else {
@@ -219,6 +243,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_flush()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             return $this->stream->flush();
         } else {
@@ -232,6 +258,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_lock()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         throw new \BadMethodCallException("Not yet supported");
     }
 
@@ -243,6 +271,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_metadata($path, $option, $value)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($url, $fs) = $this->parsePath($path);
         
         if ($option == STREAM_META_TOUCH) {
@@ -292,6 +322,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_open($path, $mode, $options, &$openedPath)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         $raiseErrors = $options & STREAM_REPORT_ERRORS;
         list ($url, $fs) = $this->parsePath($path);
 
@@ -334,6 +366,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_read($count)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         $buf = null;
         try {
             $buf = $this->stream->read($count);
@@ -359,6 +393,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_seek($offset, $whence=SEEK_SET)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             $result = $this->stream->seek($offset, $whence);
             return $result;
@@ -376,6 +412,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_set_option($option, $arg1, $arg2)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         switch ($option) {
             case STREAM_OPTION_BLOCKING:
             case STREAM_OPTION_READ_TIMEOUT:
@@ -394,6 +432,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_stat()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             return $this->stream->getNode()->stat();
         } else {
@@ -406,6 +446,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_tell()
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             return $this->stream->tell();
         } else {
@@ -419,6 +461,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_truncate($newSize)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         if ($this->stream) {
             try {
                 return $this->stream->resize($newSize);
@@ -443,6 +487,8 @@ class StreamWrapper extends Util\Object
      */
     public function stream_write($data)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         $ret = 0;
         if ($this->stream) {
             // From FTM: "If you have opened the file in append mode, any data you write
@@ -478,6 +524,8 @@ class StreamWrapper extends Util\Object
      */
     public function unlink($path)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($url, $fs) = $this->parsePath($path);
 
         try {
@@ -497,6 +545,8 @@ class StreamWrapper extends Util\Object
      */
     public function url_stat($path, $flags)
     {
+        self::$logHandle && fwrite(self::$logHandle, __METHOD__."\n");
+
         list ($url, $fs) = $this->parsePath($path);
 
         // if the url is '.' or '..', we need to return a dummy node

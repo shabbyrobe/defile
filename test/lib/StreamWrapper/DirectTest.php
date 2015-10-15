@@ -17,8 +17,8 @@ class DirectTest extends TestCase implements \Defile\FileSystem
         $this->basePath = sys_get_temp_dir()."/".uniqid('defile-directtest-', true);
         mkdir($this->basePath);
 
-        $this->templates['openFails'] ='{func}({basePath}{file}): failed to open stream: {msg}';
-        $this->templates['openDirFails'] ='{func}({basePath}{file}): failed to open dir: {msg}';
+        $this->templates['openFails']    = '{func}({basePath}{file}): failed to open stream: {msg}';
+        $this->templates['openDirFails'] = '{func}({basePath}{file}): failed to open dir: {msg}';
     }
 
     function tearDown()
@@ -29,11 +29,14 @@ class DirectTest extends TestCase implements \Defile\FileSystem
         finally {
             $dir = new \RecursiveDirectoryIterator($this->basePath);
             foreach (new \RecursiveIteratorIterator($dir, \RecursiveIteratorIterator::CHILD_FIRST) as $i) {
-                if ($i->getFilename() == '.' || $i->getFilename() == '..') continue;
-                if ($i->isDir())
+                if ($i->getFilename() == '.' || $i->getFilename() == '..') {
+                    continue;
+                }
+                if ($i->isDir()) {
                     rmdir($i->getPathname());
-                else
+                } else {
                     unlink($i->getPathname());
+                }
             }
             rmdir($this->basePath);
         }
